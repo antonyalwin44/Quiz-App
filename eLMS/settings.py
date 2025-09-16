@@ -24,9 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_@876m&g2$*55!90p5cvqfsb)_f07n#33vhp2^3ggabcx#zyjr'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -150,12 +149,10 @@ USE_TZ = False
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
-STATIC_URL = '/static/'
+SSTATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -166,10 +163,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 CSRF_TRUSTED_ORIGINS = [
     'https://quiz-app-bm0e.onrender.com',
 ]
-
-ALLOWED_HOSTS = [
-    'quiz-app-bm0e.onrender.com',
-]
+ALLOWED_HOSTS = ['quiz-app-bm0e.onrender.com']
