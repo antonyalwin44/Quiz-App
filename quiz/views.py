@@ -280,5 +280,6 @@ def quizSummary(request, code, quiz_id):
 
     else:
         return redirect('std_login')
+from django.views.decorators.csrf import csrf_exempt
 
 
