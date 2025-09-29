@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+import dj_database_url
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -21,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_@876m&g2$*55!90p5cvqfsb)_f07n#33vhp2^3ggabcx#zyjr'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-_@876m&g2$*55!90p5cvqfsb)_f07n#33vhp2^3ggabcx#zyjr')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'quiz-app-bm0e.onrender.com,127.0.0.1,localhost').split(',')
 
 
 # Application definition
@@ -38,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',
     'main.apps.MainConfig',
     'discussion.apps.DiscussionConfig',
     'attendance.apps.AttendanceConfig',
@@ -48,6 +51,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,21 +87,10 @@ WSGI_APPLICATION = 'eLMS.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'elms',
-#         'HOST': 'localhost',
-#         'USER': 'root',
-#         'PASSWORD': '',
-#     }
-# }
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}'
+    )
 }
 
 
@@ -152,10 +145,13 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 STATIC_URL = '/static/'
 
-
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -166,15 +162,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "https://yourdomain.com",  # Replace with your actual domain
-]
 
-
-ALLOWED_HOSTS = [
-    'quiz-app-bm0e.onrender.com',  # production
-    '127.0.0.1',                   # local loopback
-    'localhost',                   # optional: local name
-]
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'https://quiz-app-bm0e.onrender.com').split(',')
